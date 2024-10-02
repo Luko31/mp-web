@@ -1,10 +1,10 @@
 import React from 'react';
-import Login from './comps/LoginForm'; 
+import Dashboard from './comps/Dashboard';
 
 function App() {
   return (
     <div className="App">
-      <Login /> {}
+      <Dashboard />{}
     </div>
   );
 }
