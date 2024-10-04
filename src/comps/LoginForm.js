@@ -1,70 +1,15 @@
-// Login.js
 import React, { useState } from 'react';
-import { useSpring, animated } from '@react-spring/web';
-import styled, { keyframes } from 'styled-components';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';  // Import js-cookie
+import { useSpring } from 'react-spring';  // Assuming you are using react-spring for animations
 
-// Definice animace pro pozadí
-const backgroundAnimation = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-`;
-
-// Stylovaný obal login formuláře s animovaným pozadím
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(270deg, #ff6ec4, #7873f5, #55d7ff);
-  background-size: 600% 600%;
-  animation: ${backgroundAnimation} 10s ease infinite;
-  padding: 20px;
-`;
-
-// Stylování formuláře
-const FormWrapper = styled(animated.form)`
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-`;
-
-// Stylování jednotlivých prvků formuláře
-const InputGroup = styled.div`
-  margin-bottom: 20px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
-`;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 12px;
-  background-color: #7873f5;
-  color: white;
-  font-size: 18px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #5a56c5;
-  }
-`;
-
-// Přihlašovací komponenta
-const Login = () => {
+const LoginForm = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   // Animace formuláře
   const formAnimation = useSpring({
@@ -73,33 +18,67 @@ const Login = () => {
     config: { tension: 280, friction: 60 },
   });
 
-  const handleLogin = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitted(true);
 
-    // Simulace přihlašovací logiky
-    setTimeout(() => {
-      alert('Přihlášení úspěšné!');
-      setIsSubmitted(false);
-    }, 1000);
+    try {
+      const response = await axios.post('https://mp-server.seatbook.sk/auth/jwt/create/', {
+        username,
+        password
+      });
+
+      // Set the JWT token as a cookie
+      Cookies.set('token', response.data.access, { expires: 7 });
+
+      // Fetch the user details (assuming the backend has an endpoint for it)
+      const userResponse = await axios.get('https://mp-server.seatbook.sk/auth/users/me/', {
+        headers: {
+          Authorization: `JWT ${response.data.access}`
+        }
+      });
+
+      // Store the user ID as a cookie
+      Cookies.set('user_id', userResponse.data.id, { expires: 7 });
+
+      navigate('/dashboard'); // Redirect to dashboard
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.detail) {
+        setError(error.response.data.detail); 
+      } else {
+        setError('Login failed.');
+      }
+    }
   };
 
   return (
-    <Container>
-      <FormWrapper style={formAnimation} onSubmit={handleLogin}>
-        <h2>Přihlášení</h2>
-        <InputGroup>
-          <label>Email:</label>
-          <Input type="email" required />
-        </InputGroup>
-        <InputGroup>
-          <label>Heslo:</label>
-          <Input type="password" required />
-        </InputGroup>
-        <Button type="submit">Prihlásit se</Button>
-      </FormWrapper>
-    </Container>
+    <div style={formAnimation}>
+      <h2>Login</h2>
+      <p>Test message: LoginForm is rendering</p> {/* Add this line */}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Username:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 };
 
-export default Login;
+export default LoginForm;
