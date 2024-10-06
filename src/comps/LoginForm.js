@@ -23,7 +23,7 @@ const LoginForm = () => {
     setIsSubmitted(true);
 
     try {
-      const response = await axios.post('https://mp-server.seatbook.sk/auth/jwt/create/', {
+      const response = await axios.post('https://mp.seatbook.sk/api/auth/jwt/create/', {
         username,
         password
       });
@@ -32,7 +32,7 @@ const LoginForm = () => {
       Cookies.set('token', response.data.access, { expires: 7 });
 
       // Fetch the user details (assuming the backend has an endpoint for it)
-      const userResponse = await axios.get('https://mp-server.seatbook.sk/auth/users/me/', {
+      const userResponse = await axios.get('https://mp.seatbook.sk/api/auth/users/me/', {
         headers: {
           Authorization: `JWT ${response.data.access}`
         }

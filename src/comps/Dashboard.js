@@ -7,7 +7,7 @@ const Dashboard = () => {
 
     const openGate = async () => {
         try {
-            await axios.post('https://mp-server.seatbook.sk/vehicle', { action: 'open' });
+            await axios.post('https://mp.seatbook.sk/api/vehicle', { action: 'open' });
             setGateStatus('open');
         } catch (error) {
             console.error('Error opening gate:', error);
@@ -16,7 +16,7 @@ const Dashboard = () => {
 
     const closeGate = async () => {
         try {
-            await axios.post('https://mp-server.seatbook.sk/vehicle', { action: 'close' });
+            await axios.post('https://mp.seatbook.sk/api/vehicle', { action: 'close' });
             setGateStatus('closed');
         } catch (error) {
             console.error('Error closing gate:', error);
