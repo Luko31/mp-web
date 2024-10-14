@@ -23,13 +23,30 @@ const LoginForm = () => {
     setIsSubmitted(true);
 
     try {
+      // check if the user is already logged in and token is not expired
+      const token = Cookies.get('auth_token');
+      if (token) {
+        // Fetch the user details (assuming the backend has an endpoint for it)
+        const userResponse = await axios.get('https://mp.seatbook.sk/api/auth/users/me/', {
+          headers: {
+            Authorization: `JWT ${token}`
+          }
+        });
+
+        // Store the user ID as a cookie
+        Cookies.set('user_id', userResponse.data.id, { expires: 7 });
+
+        navigate('/'); // Redirect to dashboard
+        return;
+      }
+
       const response = await axios.post('https://mp.seatbook.sk/api/auth/jwt/create/', {
         username,
         password
       });
 
       // Set the JWT token as a cookie
-      Cookies.set('token', response.data.access, { expires: 7 });
+      Cookies.set('auth_token', response.data.access, { expires: 7 });
 
       // Fetch the user details (assuming the backend has an endpoint for it)
       const userResponse = await axios.get('https://mp.seatbook.sk/api/auth/users/me/', {
@@ -41,8 +58,13 @@ const LoginForm = () => {
       // Store the user ID as a cookie
       Cookies.set('user_id', userResponse.data.id, { expires: 7 });
 
-      navigate('/dashboard'); // Redirect to dashboard
+      navigate('/'); // Redirect to dashboard
     } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Cookies.remove('auth_token');
+        setError('Invalid credentials');
+        navigate('/login');
+      } 
       if (error.response && error.response.data && error.response.data.detail) {
         setError(error.response.data.detail); 
       } else {
