@@ -35,10 +35,7 @@ React.useEffect(() => {
     e.preventDefault();
 
     try {
-      // 
-      
-
-      const response = await axios.post('https://mp.seatbook.sk/api/auth/jwt/create/', {
+      const response = await axios.post('https://mp-server.seatbook.sk/auth/jwt/create/', {
         username,
         password
       });
