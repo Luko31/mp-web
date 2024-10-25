@@ -44,7 +44,7 @@ const Dashboard = () => {
 
     return (
         <div className='dashboard-container'>
-            <h1>Dashboard</h1>
+            <h1>Dashboard1</h1>
             <button className='dashboard-button' onClick={openGate}>Open Gate</button>
             <button className='dashboard-button' onClick={closeGate}>Close Gate</button>
             <p>Status: Gate is {gateStatus}</p>
