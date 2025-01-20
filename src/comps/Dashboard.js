@@ -27,7 +27,7 @@ const Dashboard = () => {
             updateGateState('unknown');
         });
 
-        ws.current = new WebSocket(`ws://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${access_token}`);
+        ws.current = new WebSocket(`wss://${process.env.REACT_APP_SERVER_DOMAIN}/ws/gate/?token=${access_token}`);
         ws.current.onmessage = (event) => {
             const message = JSON.parse(event.data);
             console.log(message)
