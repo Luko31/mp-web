@@ -1,18 +1,48 @@
 import React, { useState } from 'react';
 import { User, Lock } from 'lucide-react';
+import Cookies from 'js-cookie';
+import { useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({ onLogIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     // Add your login logic here
     if (!email || !password) {
       console.error('Email and password are required');
       return;
     }
-    // Handle login...
+    
+    fetch(`https://${process.env.REACT_APP_SERVER_DOMAIN}/api/auth/jwt/create/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: email,
+        password: password
+      })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.detail) {
+          alert(data.detail);
+          return;
+        }
+        Cookies.set('auth_token', data.access, { expires: 7 });
+        onLogIn();
+        
+        navigate(location.state ? location.state : '/');
+      })
+      .catch((error) => {
+        console.error('Failed to log in', error);
+      });
   };
 
   return (
@@ -46,8 +76,8 @@ const LoginPage = () => {
                   <User className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
-                  id="email"
-                  type="email"
+                  id="text"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg 

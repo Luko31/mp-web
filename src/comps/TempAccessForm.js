@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, Car, User, DoorClosed, Plus, Minus } from 'lucide-react';
+import { Car, User, DoorClosed, Plus, Minus } from 'lucide-react';
+import Header from './header';
 
 const Counter = ({ icon: Icon, value, label, helperText }) => (
   <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-lg p-6 flex flex-col items-center">
@@ -21,18 +22,14 @@ const TempAccessForm = () => {
   const [licensePlate, setLicensePlate] = useState('');
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black p-4 overflow-y-auto">
-      <div className="max-w-2xl min-h-screen mx-auto bg-gray-800/30 backdrop-blur rounded-lg border border-gray-700 shadow-xl p-4">
-        <div className="flex items-center mb-6">
-          <button className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors">
-            <Menu className="w-6 h-6 text-white" />
-          </button>
-        </div>
+    <div className="w-screen h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black overflow-y-auto text-white">
+      <Header/>
+      <div className="max-w-2xl mx-auto bg-gray-800/30 backdrop-blur rounded-lg border border-transparent md:border-gray-700 shadow-xl p-4 m-4">
 
-        <h1 className="text-3xl font-bold text-white text-center mb-2">
+        <h1 className="text-3xl font-bold text-white text-center mb-2 mt-8">
           Create Temporary Access
         </h1>
-        <p className="text-gray-400 text-center mb-8">
+        <p className="text-gray-400 text-center mb-12">
           Configure temporary access permissions for visitors
         </p>
 
@@ -82,9 +79,9 @@ const TempAccessForm = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="space-y-2 w-full">
+            <label className="block text-sm font-medium text-gray-300">
               Start Date/Time
             </label>
             <input
@@ -94,8 +91,8 @@ const TempAccessForm = () => {
                        hover:border-gray-500 transition-colors"
             />
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+          <div className="space-y-2 w-full">
+            <label className="block text-sm font-medium text-gray-300">
               End Date/Time
             </label>
             <input
